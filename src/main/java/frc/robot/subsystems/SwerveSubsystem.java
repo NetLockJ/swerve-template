@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.List;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -66,7 +67,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private RotationStyle rotationStyle = RotationStyle.Driver;
 
-    public final AHRS navX = new AHRS(SPI.Port.kMXP);
+    // public final AHRS navX = new AHRS(SPI.Port.kMXP);
+    public final Pigeon2 pigeon = new Pigeon2(Constants.SwerveModuleConstants.PIGEON_ID);
     private double navxSim;
 
     private ChassisSpeeds lastChassisSpeeds = new ChassisSpeeds();
@@ -81,8 +83,7 @@ public class SwerveSubsystem extends SubsystemBase {
             getModulePositions(), new Pose2d());
 
     public SwerveSubsystem() {
-        // ! F
-        // zeroHeading()
+        setHeading(-90);
 
         // --------- Path Planner Init ---------- \\
 
@@ -150,9 +151,9 @@ public class SwerveSubsystem extends SubsystemBase {
         // navX.reset();
         // navX.setAngleAdjustment(deg);
 
-        double error = deg - navX.getAngle();
-        double new_adjustment = navX.getAngleAdjustment() + error;
-        navX.setAngleAdjustment(new_adjustment);
+        double error = deg - pigeon.getAngle();
+        double new_adjustment = pigeon.getAngle() + error;
+        pigeon.setYaw(new_adjustment);
     }
 
     public Pose2d getPose() {
@@ -171,7 +172,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public double getHeading() {
-        return Robot.isSimulation() ? -navxSim : Units.degreesToRadians(Math.IEEEremainder(-navX.getAngle(), 360));
+        return Robot.isSimulation() ? -navxSim : Units.degreesToRadians(Math.IEEEremainder(pigeon.getAngle(), 360));
     }
 
     public Rotation2d getRotation2d() {

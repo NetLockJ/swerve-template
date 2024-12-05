@@ -21,6 +21,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -45,6 +46,8 @@ public class RobotContainer {
     private final CommandXboxController operatorXbox = new CommandXboxController(
             ControllerConstants.OPERATOR_CONTROLLER_PORT);
 
+    private final CommandJoystick joystick = new CommandJoystick(ControllerConstants.DRIVER_CONTROLLER_PORT);
+
     // private final CommandXboxController debugXbox = new CommandXboxController(0);
 
    private final SendableChooser<Command> autoChooser;
@@ -53,7 +56,7 @@ public class RobotContainer {
     // private final LimeLightSubsystem limeLightSubsystem = new
     // LimeLightSubsystem();
 
-    private final DriveCommand normalDrive = new DriveCommand(swerveDriveSubsystem, driverXbox.getHID());
+    private final DriveCommand normalDrive = new DriveCommand(swerveDriveSubsystem, joystick);
 
 /* 
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -85,7 +88,9 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
      * joysticks}.
      */
-    private void configureBindings() {}
+    private void configureBindings() {
+        joystick.button(10).onTrue(new InstantCommand(() -> swerveDriveSubsystem.setXstance()));
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -93,7 +98,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+        return null; // autoChooser.getSelected();
     }
 
     public SwerveSubsystem getSwerveSubsystem() {
